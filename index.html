@@ -34,5 +34,23 @@
             </div>
         </div>
     </div>
+    <script>
+       const apiKey = "13191f6fd3f7f89a3d87d4d9f8970e4b";
+       const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=Bengaluru";
+       
+       async function checkWeather(){
+        const response = await fetch(apiUrl + `&appid = ${apiKey}`);
+        var data = await response.json();
+
+        console.log(data);
+
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = data.main.temp;
+        document.querySelector(".humidity").innerHTML = data.main.humidity;
+        document.querySelector(".wind").innerHTML = data.wind.speed;
+       }
+
+       checkWeather();
+    </script>
 </body>
 </html>
