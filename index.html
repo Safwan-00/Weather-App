@@ -11,6 +11,7 @@
         <div class="search">
             <input type="text" placeholder="Enter city name" spellcheck="false">
             <button><img src="images/search.png"></button>
+            <button id="get-location-button">Location</button>
         </div>
         <div class="error">
             <p>Invalid City Name</p>
@@ -46,7 +47,7 @@
         const weathericon = document.querySelector(".weather-icon");
 
         async function checkWeather(city) {
-            const response = await fetch(apiUrl + city + `&appid = ${apiKey}`);
+            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
 
             if (response.status == 404) {
                 document.querySelector(".error".style.display) = block;
@@ -84,7 +85,20 @@
 
         searchBtn.addEventListener("click", () => {
             checkWeather(searchBox.value);
-        })
+        });
+    </script>
+    <script>
+        const button = document.getElementById('get-location-button');
+        function gotlocation(position){
+            console.log(position);
+        }
+        function failedToGet(){
+            console.log("Unable to fetch");
+        }
+
+        button.addEventListener('click', async() =>{
+            const result = navigator.geolocation.getCurrentPosition(gotlocation,failedToGet)
+        });
     </script>
 </body>
 </html>
