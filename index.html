@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/d8c2d504db.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="card">
         <div class="search">
             <input type="text" placeholder="Enter Area name" spellcheck="false">
-            <button><img src="images/search.png"></button>
+            <button class="auto-locate btn btn-link"><i class="fa-solid fa-location-crosshairs"></i></button>
+            <button class="search-btn"><img src="images/search.png"></button>
         </div>
         <div class="error">
             <p>Invalid City Name</p>
@@ -37,12 +39,14 @@
             </div>
         </div>
     </div>
+
     <script>
         const apiKey = "13191f6fd3f7f89a3d87d4d9f8970e4b";
         const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
         const searchBox = document.querySelector(".search input");
-        const searchBtn = document.querySelector(".search button");
+        const searchBtn = document.querySelector(".search-btn");
+        const autoLocateBtn = document.querySelector(".auto-locate");
         const weathericon = document.querySelector(".weather-icon");
 
         async function checkWeather(city) {
@@ -53,8 +57,6 @@
                 document.querySelector(".weather").style.display = "none";
             } else {
                 var data = await response.json();
-
-                //console.log(data);
 
                 document.querySelector(".city").innerHTML = data.name;
                 document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
@@ -79,12 +81,30 @@
                 document.querySelector(".weather").style.display = "block";
                 document.querySelector(".error").style.display = "none";
             }
+        }
 
+        function autoLocate() {
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+                const lat = latitude.toFixed(4);
+                const lon = longitude.toFixed(4);
+                fetch(`${apiUrl}&lat=${lat}&lon=${lon}&appid=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const cityName = data.name;
+                        searchBox.value = cityName;
+                        checkWeather(cityName);
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         }
 
         searchBtn.addEventListener("click", () => {
             checkWeather(searchBox.value);
         });
+        autoLocateBtn.addEventListener("click", autoLocate);
+
+        searchBox.addEventListener("focus", autoLocate);
     </script>
 </body>
 </html>
